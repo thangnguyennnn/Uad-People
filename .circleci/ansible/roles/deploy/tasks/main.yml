@@ -1,0 +1,41 @@
+---
+# Tasks file for deploy
+# Update and upgrade packages on the server (sudo apt update && sudo apt upgrade)
+- name: 'update and upgrade packages.'
+  become: yes
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+# Remove unneeded packages on the server (sudo apt autoremove)    
+- name: remove unneeded deps
+  become: yes
+  apt:
+    autoremove: yes
+# Install nodejs and npm on the server (sudo apt install nodejs npm)
+- name: install deps
+  become: yes
+  apt:
+    name: ['nodejs', 'npm']
+    state: latest
+    update_cache: yes
+# Install pm2 on the server (sudo npm install pm2 -g)
+- name: install pm2
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    state: latest
+    production: yes
+# Copy the artifact from the local machine to the server (scp -i ~/.ssh/udacity_key.pem -r ./dist ubuntu@${IP_ADDRESS}:/home/ubuntu/app)
+- name: extract artifact
+  become: yes
+  unarchive:
+    src: files/artifact.tar.gz
+    dest: .
+# Unzip artifact on the server (tar -xzf artifact.tar.gz)
+- name: start app
+  become: yes
+  shell: |
+    pm2 delete all
+    pm2 start npm -- start
