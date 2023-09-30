@@ -428,7 +428,7 @@ jobs:
             export URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com/#/employees"            
             echo $URL
             # Check if frontend is up and running by calling frontend url and checking if it returns "Welcome"
-            if curl ${URL} | grep "Welcome"; then return 0; else return 1; fi
+            if curl ${URL} | grep "Welcome"; then return 1; else return 1; fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
       - revert-migrations:
